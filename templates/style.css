@@ -28,4 +28,8 @@
   padding-top: 1rem;
 }
 
+.navbar-gradient {
+  background: linear-gradient(to right, var(--bs-primary), #0d98fd);
+}
+
 /*# sourceMappingURL=style.css.map */
