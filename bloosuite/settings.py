@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,7 +79,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS': {
-            "read_default_file" : "C:/Users/User/Desktop/bloosuite/bloosuite/db.cnf"
+            "read_default_file" : os.path.join(BASE_DIR, "bloosuite/db.cnf")
         },
     }
 }

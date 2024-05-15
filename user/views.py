@@ -1,9 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate
 from .models import User
 
 def index(request):
-    return render(request, "home.html")
+    if request.session.__contains__("user_id"):
+        return render(request, "home.html")
+    else:
+        return redirect(login)
 
 def login(request):
     if request.method == "POST":
@@ -28,5 +33,17 @@ def register(request):
 
     return render(request, "register.html")
 
+def logout(request):
+    if request.session.__contains__("user_id"):
+        try:
+            del request.session["user_id"]
+        except KeyError:
+            pass
+    return redirect(login)
+
+
 def payroll(request):
-    return render(request, "payroll.html")
+    if request.session.__contains__("user_id"):
+        return render(request, "payroll.html")
+    else:
+        return redirect(login)
