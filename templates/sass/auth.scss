@@ -1,0 +1,25 @@
+
+
+.auth-body{
+    background-image: url("icy-background.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.auth-form{
+    width: 40%;
+    border: 1px solid black;
+    border-radius: 15px;
+    margin: auto;
+    margin-top: 10rem;
+    backdrop-filter: blur(10px);
+
+}
+
+.mb-3{
+    width: 85%;
+    margin:auto;
+}
+
+.form-label{
+    padding-top:1rem;
+}
