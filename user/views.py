@@ -1,8 +1,19 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from .models import User
+from functools import wraps
+
+def custom_login_required(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        if request.session.__contains__("user_id"):
+            return function(request, *args, **kwargs)
+        else:
+            return redirect("login")
+
+    return wrap
+
 
 def index(request):
     if request.session.__contains__("user_id"):
@@ -33,17 +44,15 @@ def register(request):
 
     return render(request, "register.html")
 
+@custom_login_required
 def logout(request):
-    if request.session.__contains__("user_id"):
-        try:
-            del request.session["user_id"]
-        except KeyError:
-            pass
+    try:
+        del request.session["user_id"]
+    except KeyError:
+        pass
+
     return redirect(login)
 
-
+@custom_login_required
 def payroll(request):
-    if request.session.__contains__("user_id"):
-        return render(request, "payroll.html")
-    else:
-        return redirect(login)
+    return render(request, "payroll.html")
