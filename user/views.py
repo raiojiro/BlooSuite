@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import authenticate
-from .models import User
+from .models import User, Ticket
 from functools import wraps
+from django.http import HttpResponseNotAllowed
 
 def custom_login_required(function):
     @wraps(function)
@@ -56,3 +57,22 @@ def logout(request):
 @custom_login_required
 def payroll(request):
     return render(request, "payroll.html")
+
+@custom_login_required
+def tickets(request):
+    tickets = Ticket.objects.all()
+    context = { "tickets": tickets }
+    return render(request, "tickets.html", context=context)
+
+@custom_login_required
+def ticket(request):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    title = request.POST.get("title")
+    content = request.POST.get("content")
+
+    new_ticket = Ticket(title=title, content=content)
+    new_ticket.save()
+
+    return redirect("tickets")
