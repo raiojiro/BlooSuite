@@ -1,9 +1,26 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
-from .models import User
+from django.contrib.auth import authenticate
+from .models import User, Ticket
+from functools import wraps
+from django.http import HttpResponseNotAllowed
+
+def custom_login_required(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        if request.session.__contains__("user_id"):
+            return function(request, *args, **kwargs)
+        else:
+            return redirect("login")
+
+    return wrap
+
 
 def index(request):
-    return render(request, "home.html")
+    if request.session.__contains__("user_id"):
+        return render(request, "home.html")
+    else:
+        return redirect(login)
 
 def login(request):
     if request.method == "POST":
@@ -28,5 +45,34 @@ def register(request):
 
     return render(request, "register.html")
 
+@custom_login_required
+def logout(request):
+    try:
+        del request.session["user_id"]
+    except KeyError:
+        pass
+
+    return redirect(login)
+
+@custom_login_required
 def payroll(request):
     return render(request, "payroll.html")
+
+@custom_login_required
+def tickets(request):
+    tickets = Ticket.objects.all()
+    context = { "tickets": tickets }
+    return render(request, "tickets.html", context=context)
+
+@custom_login_required
+def ticket(request):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    title = request.POST.get("title")
+    content = request.POST.get("content")
+
+    new_ticket = Ticket(title=title, content=content)
+    new_ticket.save()
+
+    return redirect("tickets")

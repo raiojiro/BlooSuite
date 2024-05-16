@@ -1,18 +1,10 @@
 {% extends "base.html" %} {% block content %}
 <body>
-  <nav class="navbar navbar-expand-lg navbar-gradient">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="/home.html">BlooSuite</a>
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link fw-bold" href="/payroll.html">Payroll</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+  {% include "nav.html" %}
+
   <div class="p-4">
     <div class="container-fluid border rounded">
-      <table class="table text-center">
+      <table class="table">
         <caption>
           Payroll
         </caption>
@@ -21,7 +13,7 @@
             <th>Date</th>
             <th>Gross income</th>
             <th>Net income</th>
-            <th>Download</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -54,4 +46,4 @@
     </div>
   </div>
 </body>
-{% endblock content %}
+{% endblock %}

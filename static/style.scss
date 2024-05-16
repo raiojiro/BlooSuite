@@ -1,5 +1,9 @@
+$main-background: url("./background.jpg");
+
 *{
     font-size:1rem;
 }
 
 @import "sass/auth";
+@import "sass/main";
+@import "sass/calendar";

@@ -3,3 +3,24 @@
     color: azure;
     
 }
+
+body{
+    background-image: $main-background;
+}
+
+.main-title{
+    font-weight: bold;
+    text-decoration: none;
+    color: #191970;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.main-div{
+        border: 2px solid blue;
+        border-radius: 20px;
+        margin-top: 2rem;
+}
+
+.dashboard{
+    margin-right: 3rem;
+}

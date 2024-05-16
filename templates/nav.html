@@ -1,0 +1,32 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">BlooSuite</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="d-flex flex-row-reverse">
+            <div class="collapse navbar-collapse" id="" navbarSupportedContent">
+                {% with "Home Payroll Tickets" as arr %}
+                {% for i in arr.split %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        {% if i in request.path %}
+                        <a class="nav-link active" href="#">{{ i }}</a>
+                        {% else %}
+                        <a class="nav-link" href="/{{ i | lower}}">{{ i }}</a>
+                        {% endif %}
+                        </li>
+                </ul>
+                        {% endfor %}
+                        {% endwith %}
+
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
