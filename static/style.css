@@ -1,5 +1,3 @@
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
-
 * {
   font-size: 1rem;
 }
@@ -30,6 +28,10 @@
 
 .logo-center {
   margin: auto;
+}
+
+.logo-center {
+  margin: auto;
   color: azure;
 }
 
@@ -37,22 +39,42 @@ body {
   background-image: url("./background.jpg");
 }
 
+.navbar {
+  background: rgb(2, 0, 36);
+  background: linear-gradient(90deg, rgb(2, 0, 36) 0%, rgb(0, 0, 145) 35%, rgb(0, 212, 255) 100%);
+}
+
+.navbar-brand {
+  color: #00d4ff;
+  margin: 1rem 2rem;
+  font-size: 4rem;
+}
+
+.nav-item :hover {
+  background: rgba(208, 208, 208, 0.5);
+}
+
 .main-title {
+  margin: 1rem 2rem;
+}
+
+.secondary-title {
   font-weight: bold;
   text-decoration: none;
-  color: #191970;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
 .main-div {
   border: 2px solid blue;
   border-radius: 20px;
   margin-top: 2rem;
+  margin: 2rem 2rem;
 }
 
-.dashboard {
-  margin-right: 3rem;
+.modal-input {
+  border: 2px solid blue;
+  border-radius: 10px;
+  margin: 1px;
 }
 
 .wrapper {
@@ -94,8 +116,8 @@ body {
   margin: 0;
 }
 
-#event-section input[type="date"],
-#event-section input[type="text"] {
+#event-section input[type=date],
+#event-section input[type=text] {
   margin: 10px 0;
   padding: 5px;
   width: 80%;
@@ -208,7 +230,7 @@ body {
 .date-picker.selected {
   background-color: #f2f2f2;
   font-weight: bold;
-  outline: 1px dashed #00bcd4;
+  outline: 1px dashed #00BCD4;
 }
 
 .date-picker.selected span {
@@ -269,10 +291,6 @@ body {
   border: 1px solid #bfc5c5;
   border-radius: 3px;
   padding: 5px 1em;
-}
-
-.clickable {
-  cursor: pointer;
 }
 
 /*# sourceMappingURL=style.css.map */
