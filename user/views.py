@@ -4,6 +4,10 @@ from django.contrib.auth import authenticate
 from .models import User, Ticket
 from functools import wraps
 from django.http import HttpResponseNotAllowed
+from openai import OpenAI
+import os
+
+#client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 def custom_login_required(function):
     @wraps(function)
@@ -15,12 +19,12 @@ def custom_login_required(function):
 
     return wrap
 
-
+@custom_login_required
 def index(request):
-    if request.session.__contains__("user_id"):
+    if request.method == "POST":
+
         return render(request, "home.html")
-    else:
-        return redirect(login)
+    return render(request, "home.html")
 
 def login(request):
     if request.method == "POST":

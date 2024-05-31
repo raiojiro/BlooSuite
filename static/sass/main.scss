@@ -8,10 +8,32 @@ body{
     background-image: $main-background;
 }
 
+.navbar{
+background: rgb(2,0,36);
+background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,0,145,1) 35%, rgba(0,212,255,1) 100%);
+}
+
+.navbar-brand{
+    color: #00d4ff;
+    margin: 1rem 2rem;
+    font-size: 4rem;
+    
+}
+
+.nav-item{
+    :hover{
+        background:rgb(208,208,208, 0.5);
+    }
+}
+
+
 .main-title{
+    margin: 1rem 2rem;
+}
+
+.secondary-title{
     font-weight: bold;
     text-decoration: none;
-    color: #191970;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
@@ -19,8 +41,11 @@ body{
         border: 2px solid blue;
         border-radius: 20px;
         margin-top: 2rem;
+        margin: 2rem 2rem;
 }
 
-.dashboard{
-    margin-right: 3rem;
+.modal-input{
+    border: 2px solid blue;
+    border-radius: 10px;
+    margin: 1px;
 }
