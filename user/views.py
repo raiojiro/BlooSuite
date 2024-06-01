@@ -3,8 +3,8 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import authenticate
 from .models import User, Ticket
 from functools import wraps
-from django.http import HttpResponseNotAllowed
 from openai import OpenAI
+from django.http import HttpResponseNotAllowed, HttpResponseForbidden
 import os
 
 #client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
@@ -35,7 +35,14 @@ def login(request):
 
         if check_password(password, user.password):
             request.session["user_id"] = user.id
-            return redirect("home")
+
+            match user.role:
+                case User.Role.USER:
+                    return redirect("home")
+                case User.Role.ADMIN:
+                    return redirect("admin")
+                case _:
+                    raise ValueError(f"Invalid user role: {user.role}")
 
     return render(request, "login.html")
 
@@ -80,3 +87,11 @@ def ticket(request):
     new_ticket.save()
 
     return redirect("tickets")
+
+@custom_login_required
+def admin(request):
+    user = User.objects.get(id=request.session["user_id"])
+    if user.role != User.Role.ADMIN:
+        return redirect("login")
+
+    return render(request, "admin.html")
