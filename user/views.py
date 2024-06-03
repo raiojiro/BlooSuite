@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import authenticate
-from .models import User, Ticket
+from .models import User, Ticket, Payroll
 from functools import wraps
 from openai import OpenAI
 from django.http import HttpResponseNotAllowed, HttpResponseForbidden
 import os
+import inspect
 
 #client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
@@ -13,6 +14,9 @@ def custom_login_required(function):
     @wraps(function)
     def wrap(request, *args, **kwargs):
         if request.session.__contains__("user_id"):
+            if "user" in inspect.getfullargspec(function).args:
+                user = User.objects.get(id=request.session["user_id"])
+                kwargs["user"] = user
             return function(request, *args, **kwargs)
         else:
             return redirect("login")
@@ -66,8 +70,29 @@ def logout(request):
     return redirect(login)
 
 @custom_login_required
-def payroll(request):
-    return render(request, "payroll.html")
+def payroll(request, user, id=None):
+    if request.method == "POST":
+        if user.role != User.Role.ADMIN:
+            return redirect("login")
+
+        payroll = Payroll()
+        payroll_user = User.objects.get(id=request.POST.get("user_id"))
+        payroll.amount = request.POST.get("amount")
+        payroll.user = payroll_user
+        payroll.save()
+
+        return redirect("admin")
+
+    payrolls = []
+
+    if id is not None:
+        payrolls = Payroll.objects.filter(user__id=id)
+    else:
+        payrolls = Payroll.objects.filter(user__id=request.session["user_id"])
+
+    context = { "payrolls": payrolls }
+
+    return render(request, "payroll.html", context=context)
 
 @custom_login_required
 def tickets(request):
@@ -94,4 +119,8 @@ def admin(request):
     if user.role != User.Role.ADMIN:
         return redirect("login")
 
-    return render(request, "admin.html")
+    users = User.objects.all()
+
+    context = { "users": users }
+
+    return render(request, "admin.html", context)
