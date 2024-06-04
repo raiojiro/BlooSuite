@@ -1,5 +1,8 @@
 {% extends "base.html" %} {% block content %}
 <body class="auth-body">
+  <div class="container-fluid logo-center logo-auth">
+    <a class="navbar-brand text-center">BlooSuite</a>
+  </div>
   <div class="auth-form">
     <form method="POST">
       {% csrf_token %}
@@ -9,7 +12,7 @@
       </div>
       <div class="mb-3">
         <label class="form-label" for="username">Username</label>
-        <input class="form-control" name="username" type="text" id="username" />
+        <input class="form-control" name="username" type="text" id="username" minlength="3" maxlength="20" required />
       </div>
       <div class="mb-3">
         <label class="form-label" for="password">Password</label>
@@ -18,9 +21,15 @@
           name="password"
           type="password"
           id="password"
+          minlength ="8"
+          maxlength="20"
+          required
         />
       </div>
       <div class="mb-3">
+        {% if error %}
+        <span class="alert alert-danger form-control">{{ error }}</span>
+        {% endif %}
         <button type="submit" class="btn btn-dark" style="margin-top: 1rem">
           Register
         </button>

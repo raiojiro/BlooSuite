@@ -8,7 +8,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
-            <script src="calendar.js"></script>
+            <script src="{% static 'calendar.js' %}"></script>
             <script>
                 function addList() {
                     var newspan = document.createElement("span");
@@ -17,7 +17,7 @@
                 }
                 function addGroup(){
                     var newspan=document.createElement("span");
-                    newspan.innerHTML='<input type="text" class="form-control modal-input" id="userlist" name="userlist[]">';
+                    newspan.innerHTML='<select class="form-select" id="userlist" name="userlist[]" aria-label="Select User"> {% for user in users %} <option value="{{user.id}}">{{ user.name }}</option>{% endfor %}</select > ';
                     document.getElementById("userlist").appendChild(newspan);
                 }
             </script>
@@ -27,13 +27,16 @@
     {% include "nav.html" %}
     <h3 class="text-primary main-title">Dashboard</h2>
     <div class="container-fluid main-body">
-        <div class="row">
-            <div class="col-lg main-div dashboard">
+            <div class="main-div dashboard">
                 <h3 class="text-primary border-bottom border-primary secondary-title">Projects</h3>
-
                 <!-- Project Modal Button -->
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProjectModal">
                     Add Project
+                </button>
+
+                <!--Group Modal Button-->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#GroupModal">
+                    Add Group
                 </button>
 
                 <!-- Project Modal -->
@@ -47,12 +50,19 @@
                             <div class="modal-body">
                             <form id="projectform" action="" method="post">
                                 {% csrf_token %}
+                                <input type="hidden" name="formtype" value="project">
                                <label for="projectname" class="form-label">Project Name:</label>
                                 <input type="text" class="form-control" id="projectname" name="projectname"><br>
                                 <label for="projectdescription" class="form-label"">Project Description:</label>
                                 <textarea class= "form-control" id="projectdescription" name="projectdescription"></textarea>
+                                {% if groups %}
                                 <label for="group" class="form-label">Group:</label>
-                                <input type="text" class="form-control" id="group" name="group">
+                                <select id="group" name="group" class="form-select" aria-label="Select Group"> 
+                                    {% for group in groups %}
+                                    <option value="{{group.id}}">{{group.name}}</option>
+                                    {% endfor %}
+                                </select>
+                                {% endif %}                                
                                 <div id="todolist">
                                 <label for="projectlist" class="form-label">Project List:</label>
                                 <input type="text" class="form-control modal-input" id="projectlist" name="projectlist[]">
@@ -62,17 +72,14 @@
                             </div>
                             <div class="modal-footer">
                                 <input type="reset" value="Close" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <input type="submit" value="Save Changes" class="btn btn-primary">
+                                <input type="submit" id= "submit" value="Submit" class="btn btn-primary">
                             </div>
                             </form>
                         </div>
                     </div>
                 </div> <!--- End of Project Modal -->
 
-                <!--Group Modal Button-->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#GroupModal">
-                    Add Group
-                </button>
+
 
                 <!-- Group Modal -->
                 <div class="modal fade" id="GroupModal" tabindex="-1" aria-labelledby="GroupModalLabel" aria-hidden="true">
@@ -83,29 +90,60 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form id="groupform" action="" method="post">
+                                <form id="groupform" method="POST">
                                     {% csrf_token %}
+                                    <input type="hidden" name="formtype" value="group">
                                     <label for="groupname" class="form-label">Group Name:</label>
                                     <input type="text" class="form-control" id="groupname" name="groupname">
                                     <div id="userlist">
                                         <label for="userlist" class="form-label"">User List:</label>
-                                        <input type="text" class="form-control modal-input" id="userlist" name="userlist[]">
+                                        <select id="userlist" name= "userlist[]" class="form-select" aria-label="Select User"> 
+                                            {% for user in users %}
+                                            <option value="{{user.id}}">{{user.name}}</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                     <br><button class="btn btn-primary" type="button" onclick="addGroup()">Add</button>
-                            </div>
-                            <div class="modal-footer">
+                            
+                            <span class="modal-footer">
                                 <input type="reset" value="Close" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <input type="submit" value="Save Changes" class="btn btn-primary">
-                            </div>
+                                <input type="submit" id="submit" value="Create" class="btn btn-primary">
+                            </span>
                             </form>
+                        </div>
                         </div>
                     </div>
                 </div> <!--- End of Group Modal -->
 
+                <div class="container-fluid">
+                    {% if projects %}
+                   <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Project Name</th>
+                            <th>Project Description</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for project in projects %}
+                        <tr>
+                            <td>{{project.name}}</td>
+                            <td>{{project.description}}</td>
+                            <form>
+                            <input type="hidden" id="project_id" name="project_id" value="{{project.id}}">
+                            <td><button class= "btn btn-primary" id="mark_done" name="mark_done type="submit">Mark as Done</button></td>
+                            </form>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
             </div> <!-- End of Dashboard -->
 
 
-            <div class="col-sm main-div">
+            <div class="main-div">
                 <h3 class="text-primary secondary-title border-bottom border-primary">Calendar</h3>
                 <div class="wrapper">
                     <div class="container-calendar">
@@ -172,9 +210,7 @@
                     </div>
                 </div>
                 <!-- Include the JavaScript file for the calendar functionality -->
-                
             </div>
-        </div>
-
+            </div>
   </body>
 </html>
