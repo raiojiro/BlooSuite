@@ -110,28 +110,28 @@ def logout(request):
 
 @custom_login_required
 def payroll(request, user, id=None):
-        if request.method == "POST":
-            if user.role != User.Role.ADMIN:
-                return redirect("login")
+    if request.method == "POST":
+        if user.role != User.Role.ADMIN:
+            return redirect("login")
 
-            payroll = Payroll()
-            payroll_user = User.objects.get(id=request.POST.get("user_id"))
-            payroll.amount = request.POST.get("amount")
-            payroll.user = payroll_user
-            payroll.save()
+        payroll = Payroll()
+        payroll_user = User.objects.get(id=request.POST.get("user_id"))
+        payroll.amount = request.POST.get("amount")
+        payroll.user = payroll_user
+        payroll.save()
 
-            return redirect("admin")
+        return redirect("admin")
 
-        payrolls = []
+    payrolls = []
 
-        if id is not None:
-            payrolls = Payroll.objects.filter(user__id=id)
-        else:
-            payrolls = Payroll.objects.filter(user__id=request.session["user_id"])
+    if id is not None:
+        payrolls = Payroll.objects.filter(user__id=id)
+    else:
+        payrolls = Payroll.objects.filter(user__id=request.session["user_id"])
 
-        context = { "payrolls": payrolls }
+    context = { "payrolls": payrolls }
 
-        return render(request, "payroll.html", context=context)
+    return render(request, "payroll.html", context=context)
 
 @custom_login_required
 def tickets(request):
