@@ -75,6 +75,7 @@ def login(request):
         user = User.objects.get(username=username)
 
         if check_password(password, user.password):
+            request.session["user_id"] = user.id
             match user.role:
                 case User.Role.USER:
                     return redirect("home")
