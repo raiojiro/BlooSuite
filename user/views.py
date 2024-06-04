@@ -7,6 +7,7 @@ from django.http import HttpResponseNotAllowed
 import google.generativeai as gemini
 from dotenv import load_dotenv
 import os
+import inspect
 
 '''
 load_dotenv()
@@ -20,10 +21,12 @@ def custom_login_required(function):
     @wraps(function)
     def wrap(request, *args, **kwargs):
         if request.session.__contains__("user_id"):
+            if "user" in inspect.getfullargspec(function).args:
+                user = User.objects.get(id=request.session["user_id"])
+                kwargs["user"] = user
             return function(request, *args, **kwargs)
         else:
             return redirect("login")
-
     return wrap
 
 @custom_login_required
@@ -60,7 +63,7 @@ def index(request):
                 new_project.list.add(list.id)
             new_project.save()
     groups = User_group.objects.filter(users=request.session["user_id"])
-    projects = Project.groups.
+    projects = Project.group.get_object
     users = User.objects.order_by("name").only("id" , "name")
     return render(request, "home.html", {'projects':projects, "groups":groups, "users":users})
 
@@ -72,8 +75,13 @@ def login(request):
         user = User.objects.get(username=username)
 
         if check_password(password, user.password):
-            request.session["user_id"] = user.id
-            return redirect("home")
+            match user.role:
+                case User.Role.USER:
+                    return redirect("home")
+                case User.Role.ADMIN:
+                    return redirect("admin")
+                case _:
+                    raise ValueError(f"Invalid user role: {user.role}")
         else:
             return render(request, "login.html", {"error": "Invalid username or password"})
 
@@ -101,8 +109,29 @@ def logout(request):
     return redirect(login)
 
 @custom_login_required
-def payroll(request):
-    return render(request, "payroll.html")
+def payroll(request, user, id=None):
+        if request.method == "POST":
+            if user.role != User.Role.ADMIN:
+                return redirect("login")
+
+            payroll = Payroll()
+            payroll_user = User.objects.get(id=request.POST.get("user_id"))
+            payroll.amount = request.POST.get("amount")
+            payroll.user = payroll_user
+            payroll.save()
+
+            return redirect("admin")
+
+        payrolls = []
+
+        if id is not None:
+            payrolls = Payroll.objects.filter(user__id=id)
+        else:
+            payrolls = Payroll.objects.filter(user__id=request.session["user_id"])
+
+        context = { "payrolls": payrolls }
+
+        return render(request, "payroll.html", context=context)
 
 @custom_login_required
 def tickets(request):
@@ -122,3 +151,16 @@ def ticket(request):
     new_ticket.save()
 
     return redirect("tickets")
+
+@custom_login_required
+def admin(request):
+    user = User.objects.get(id=request.session["user_id"])
+    if user.role != User.Role.ADMIN:
+        return redirect("login")
+
+    users = User.objects.all()
+
+    context = { "users": users }
+
+    return render(request, "admin.html", context)
+
