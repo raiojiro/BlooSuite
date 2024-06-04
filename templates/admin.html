@@ -1,0 +1,77 @@
+{% extends "base.html" %} {% block content %}
+<body>
+  {% include "nav.html" %}
+  <div id="submit-modal" class="modal fade modal-xl" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content" action="/payroll/" method="POST">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">Submit Payroll</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex flex-column gap-2">
+            <label for="user_id">User</label>
+            <select name="user_id" id="user_id">
+              {% for user in users %}
+              <option value="{{ user.id }}">{{user.username}}</option>
+              {% endfor %}
+            </select>
+            <label for="amount">Amount</label>
+            <input type="text" name="amount" id="amount" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="p-4">
+    <div class="container-fluid border rounded p-4">
+      <button
+        class="btn btn-primary mb-4"
+        data-bs-toggle="modal"
+        data-bs-target="#submit-modal"
+      >
+        Submit Payroll
+      </button>
+      <table class="table">
+        <caption>
+          Users
+        </caption>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %} {% if user.role != "ADMIN" %}
+          <tr>
+            <td>{{ user.username }}</td>
+            <td>
+              <a href="{% url 'payroll' user.id %}"
+                ><i class="bi bi-credit-card text-black"></i
+              ></a>
+            </td>
+          </tr>
+          {% endif %} {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+{% endblock %}
