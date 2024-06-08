@@ -35,8 +35,32 @@ def index(request):
         if request.POST.get("mark_done") is not None:
             project_id = request.POST.get("project_id")
             project = Project.objects.get(id=project_id)
-            project.completed = True
+            project.status = True
             project.save()
+        
+        if request.POST.get("deletegroup") is not None:
+            group_id = request.POST.get("updategroup")
+            print(group_id)
+            group = User_group.objects.filter(id=group_id).first()
+            group.delete()
+
+        if request.POST.get("updategroup") is not None:
+            group_id = request.POST.get("group_id")
+            group = User_group.objects.get(id=group_id)
+            group.users.all().delete()
+            users = request.POST.getlist("userlist[]")
+            for user in users:
+                if user is not None:
+                    if User.objects.filter(id=user).exists():
+                        b = User.objects.get(id=user)
+                        group.users.add(b.id)
+            group.save()
+ 
+        if request.POST.get("selectgroup") is not None:
+            group_id = request.POST.get("group_id")
+            group = User_group.objects.get(id=group_id)
+            users = User.objects.all()
+            return render(request, "home.html", {"updategroup":group, "users":users})
         
         if request.POST.get("formtype") == "group":
             name = request.POST.get("groupname")
@@ -45,9 +69,10 @@ def index(request):
             new_group.save()
             new_group.users.add(request.session["user_id"])
             for user in users:
-                if User.objects.filter(username=user).exists():
-                    b = User.objects.get(username=user)
-                    new_group.users.add(b.id)
+                if user is not None:
+                    if User.objects.filter(username=user).exists():
+                        b = User.objects.get(username=user)
+                        new_group.users.add(b.id)
             new_group.save()
         if request.POST.get("formtype") == "project":
             name = request.POST.get("projectname")
@@ -63,7 +88,7 @@ def index(request):
                 new_project.list.add(list.id)
             new_project.save()
     groups = User_group.objects.filter(users=request.session["user_id"])
-    projects = Project.group.get_object
+    projects = Project.objects.filter(group__users=request.session["user_id"], status=False).order_by('created_at')
     users = User.objects.order_by("name").only("id" , "name")
     return render(request, "home.html", {'projects':projects, "groups":groups, "users":users})
 
