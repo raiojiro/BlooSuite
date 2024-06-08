@@ -1,0 +1,6 @@
+[client]
+database = bloosuite
+host = localhost
+user = root
+password = root
+default-character-set = utf8
