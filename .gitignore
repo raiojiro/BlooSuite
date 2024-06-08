@@ -164,5 +164,5 @@ cython_debug/
 
 scripts/
 
-#Vs Code
+#VS Code
 .vscode/
