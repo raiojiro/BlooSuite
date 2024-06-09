@@ -41,7 +41,6 @@
             <div class="modal-body">
                 <form id="projectform" action="" method="post">
                     {% csrf_token %}
-                    <input type="hidden" name="formtype" value="project">
                     <label for="projectname" class="form-label">Project Name:</label>
                     <input type="text" class="form-control" id="projectname" name="projectname" required><br>
                     <label for="projectdescription" class="form-label"">Project Description:</label>
@@ -64,7 +63,7 @@
             </div>
             <div class="modal-footer">
                 <input type="reset" value="Close" class="btn btn-secondary" data-bs-dismiss="modal">
-                <input type="submit" id="submit" value="Submit" class="btn btn-primary">
+                <input type="submit" id="submit" name="addproject" value="Submit" class="btn btn-primary">
             </div>
             </form>
         </div>
@@ -82,7 +81,6 @@
         <div class="modal-body">
             <form id="addgroupform" method="POST">
                 {% csrf_token %}
-                <input type="hidden" name="formtype" value="group">
                 <label for="groupname" class="form-label">Group Name:</label>
                 <input type="text" class="form-control" id="groupname" name="groupname" required>
                 <div id="addgroupuserlist">
@@ -98,7 +96,7 @@
 
                 <span class="modal-footer">
                     <input type="reset" value="Close" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <input type="submit" id="submit" value="Create" class="btn btn-primary">
+                    <input type="submit" id="submit" name="addgroup" value="Create" class="btn btn-primary">
                 </span>
             </form>
         </div>
@@ -127,7 +125,7 @@
                     <span class="modal-footer">
                         <input type="reset" value="Close" class="btn btn-secondary" data-bs-dismiss="modal">
                         <input type="submit" id="deletegroup" name="deletegroup" value="Delete Group" class="btn btn-primary">
-                      <!--  <input type="submit" id="selectgroup" name="selectgroup" value="Select" class="btn btn-primary open-UpdateGroup" data-bs-toggle="modal" data-bs-target="#UpdateGroupModal2">-->
+                        <input type="submit" id="selectgroup" name="selectgroup" value="Select" class="btn btn-primary">
                     </span>
                 </form>
             </div>

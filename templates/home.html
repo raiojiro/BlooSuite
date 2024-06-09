@@ -17,8 +17,8 @@
                 }
                 function addGroup(){
                     var newspan=document.createElement("span");
-                    newspan.innerHTML='<select class="form-select" id="userlist" name="userlist[]" aria-label="Select User"> {% for user in users %} <option value="{{user.id}}">{{ user.name }}</option>{% endfor %}</select > ';
-                    document.getElementById("userlist").appendChild(newspan);
+                    newspan.innerHTML='<select class="form-select" id="userlist" name="userlist[]" aria-label="Select User"> {% for user in users %} <option value="{{user.id}}">{{ user.name }}</option>{% endfor %}</select>';
+                    document.getElementById("addgroupuserlist").appendChild(newspan);
                 }
             </script>
         <link rel="stylesheet" href="{% static 'style.css' %}" />
@@ -60,7 +60,8 @@
                         <tbody>
                         {% for project in projects %}
                         <tr>
-                            <td>{{project.name}}</td>
+                            {% csrf_token %}
+                            <td><a href="{% url 'projects' project.id %}" class="link-body-emphasis">{{project.name}}</a></td>
                             <td>{{project.description}}</td>
                             <form method="POST">
                                 {% csrf_token %}
