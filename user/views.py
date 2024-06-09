@@ -38,13 +38,16 @@ def index(request):
             project.status = True
             project.save()
         
-        if request.POST.get("deletegroup") is not None:
+        if request.POST.get("deletegroup"):
             group_id = request.POST.get("updategroup")
-            print(group_id)
-            group = User_group.objects.filter(id=group_id)
-            group.delete()
+            group = User_group.objects.get(id=group_id)
+            try:
+                group.delete()
+            except:
+                pass
+        
 
-        if request.POST.get("updategroup") is not None:
+        elif request.POST.get("updategroup"):
             group_id = request.POST.get("group_id")
             group = User_group.objects.get(id=group_id)
             group.users.all().delete()
@@ -55,26 +58,21 @@ def index(request):
                         b = User.objects.get(id=user)
                         group.users.add(b.id)
             group.save()
- 
-        if request.POST.get("selectgroup") is not None:
-            group_id = request.POST.get("group_id")
-            group = User_group.objects.get(id=group_id)
-            users = User.objects.all()
-            return render(request, "home.html", {"updategroup":group, "users":users})
         
-        if request.POST.get("formtype") == "group":
+        elif request.POST.get("addgroup"):
             name = request.POST.get("groupname")
             users = request.POST.getlist("userlist[]")
+            print(users)
             new_group = User_group.objects.create(name=name)
             new_group.save()
             new_group.users.add(request.session["user_id"])
             for user in users:
+                print(user)
                 if user is not None:
-                    if User.objects.filter(username=user).exists():
-                        b = User.objects.get(username=user)
-                        new_group.users.add(b.id)
+                    if User.objects.filter(id=user).exists():
+                        new_group.users.add(user)
             new_group.save()
-        if request.POST.get("formtype") == "project":
+        elif request.POST.get("addproject"):
             name = request.POST.get("projectname")
             description = request.POST.get("projectdescription")
             group_id = request.POST.get("group")
@@ -83,7 +81,7 @@ def index(request):
             new_project = Project.objects.create(name=name, description = description, group=group)
             new_project.save
             for item in list:
-                list = ToDoItem(title=list)
+                list = ToDoItem(title=item)
                 list.save()
                 new_project.list.add(list.id)
             new_project.save()
@@ -190,3 +188,22 @@ def admin(request):
 
     return render(request, "admin.html", context)
 
+@custom_login_required
+def projects(request, id=None):
+    project = Project.objects.get(id=id, group__users=request.session["user_id"])
+    if request.method == "POST":       
+        todoitem = project.list.get(id=request.POST.get("id"))
+        todoitem.title = request.POST.get("title")
+        todoitem.description = request.POST.get("description")
+        file = request.FILES.get("file")
+        if file is not None:
+            todoitem.file = file
+        status = request.POST.get("status")
+        print(status)
+        todoitem.save()
+    user = User.objects.get(id=request.session["user_id"])    
+    if project is not None:
+        context = { "project": project }
+        return render(request, "projects.html", context)
+    else:
+        return redirect("home")
