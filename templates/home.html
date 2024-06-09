@@ -8,6 +8,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
+<<<<<<< HEAD
         <script src="{% static 'calendar.js' %}"></script>
         <script>
             function addList() {
@@ -20,6 +21,20 @@
                 newspan.innerHTML = '<select class="form-select" id="addgroupuserlist" name="userlist[]" aria-label="Select User"> {% for user in users %} <option value="{{user.id}}">{{ user.name }}</option>{% endfor %}</select> ';
                 document.getElementById("addgroupuserlist").appendChild(newspan);
             }
+=======
+            <script src="{% static 'calendar.js' %}"></script>
+            <script>
+                function addList() {
+                    var newspan = document.createElement("span");
+                    newspan.innerHTML = '<input type="text" class="form-control modal-input" id="projectlist" name="projectlist[]">';
+                    document.getElementById("todolist").appendChild(newspan);
+                }
+                function addGroup(){
+                    var newspan=document.createElement("span");
+                    newspan.innerHTML='<select class="form-select" id="userlist" name="userlist[]" aria-label="Select User"> {% for user in users %} <option value="{{user.id}}">{{ user.name }}</option>{% endfor %}</select>';
+                    document.getElementById("addgroupuserlist").appendChild(newspan);
+                }
+>>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
             </script>
         <link rel="stylesheet" href="{% static 'style.css' %}" />
         
@@ -30,13 +45,21 @@
     <div class="container-fluid main-body">
             <div class="main-div project-div">
                 <h3 class="text-primary border-bottom border-primary secondary-title">Projects</h3>
+<<<<<<< HEAD
                 <div class="container">
+=======
+                <div class="container-fluid">
+>>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
                 <!-- Project Modal Button -->
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProjectModal">
                     Add Project
                 </button>
 
+<<<<<<< HEAD
                 <!-- Add Group Modal Button-->
+=======
+                <!--Add Group Modal Button-->
+>>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddGroupModal">
                     Add Group
                 </button>
@@ -47,13 +70,24 @@
                 </button>
                 </div>
 
+<<<<<<< HEAD
                 
 
                 {% include 'modal.html' %}
 
                 <div class="project-list-div">
+=======
+                <!--Update Group Modal Button-->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#UpdateGroupModal">
+                    Update/Delete Group
+                </button>
+                </div>
+
+                {% include 'modal.html' %}
+                <div class="container-md project-list-div">
+>>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
                     {% if projects %}
-                   <table class="table table-bordered">
+                   <table class="table">
                     <thead>
                         <tr>
                             <th>Project Name</th>
@@ -64,10 +98,15 @@
                         <tbody>
                         {% for project in projects %}
                         <tr>
-                            <td>{{project.name}}</td>
+                            {% csrf_token %}
+                            <td><a href="{% url 'projects' project.id %}" class="link-body-emphasis">{{project.name}}</a></td>
                             <td>{{project.description}}</td>
                             <form method="POST">
+<<<<<<< HEAD
                             {% csrf_token %}
+=======
+                                {% csrf_token %}
+>>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
                             <input type="hidden" id="project_id" name="project_id" value="{{project.id}}">
                             <td><button class= "btn btn-primary" id="mark_done" name="mark_done" type="submit">Mark as Done</button></td>
                             </form>
@@ -81,7 +120,15 @@
         </div>
 
 
+<<<<<<< HEAD
             {% include 'calendar.html' %}
 
+=======
+            <div class="main-div">
+                {% include 'calendar.html' %}
+                <!-- Include the JavaScript file for the calendar functionality -->
+            </div>
+            </div>
+>>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
   </body>
 </html>

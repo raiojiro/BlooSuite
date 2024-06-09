@@ -80,6 +80,7 @@ body {
 }
 
 .project-div {
+<<<<<<< HEAD
   min-height: 30vh;
 }
 
@@ -87,6 +88,14 @@ body {
   background-color: blue !important;
   width: 80%;
   margin: 1rem;
+=======
+  min-height: 40vh;
+}
+
+.project-list-div {
+  margin: 1rem 0.2rem;
+  width: 80%;
+>>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
 }
 
 .wrapper {

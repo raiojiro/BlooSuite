@@ -23,9 +23,15 @@ class ToDoItem(models.Model):
     description = models.TextField()
     file = models.FileField(upload_to='files/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+<<<<<<< HEAD
     status = models.BooleanField(default=False)
+=======
+    status = models.BooleanField(default=False, choices=((False, "pending"),(True, "completed")))
+>>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
 
 class Project(models.Model):
+    def getlist(self):
+        return ToDoItem.objects.filter(project=self.id)
     name = models.TextField()
     description = models.TextField()
     list = models.ManyToManyField(ToDoItem)
