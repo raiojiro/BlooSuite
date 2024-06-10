@@ -21,7 +21,7 @@ class Ticket(models.Model):
 class ToDoItem(models.Model):
     title = models.TextField()
     description = models.TextField()
-    file = models.FileField(upload_to='files/', null=True, blank=True)
+    file = models.FileField(upload_to='', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=False, choices=((False, "pending"),(True, "completed")))
 

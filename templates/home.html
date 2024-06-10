@@ -22,6 +22,7 @@
                 }
             </script>
         <link rel="stylesheet" href="{% static 'style.css' %}" />
+        
   </head>
   <body>
     {% include "nav.html" %}
@@ -39,8 +40,8 @@
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddGroupModal">
                     Add Group
                 </button>
-
-                <!--Update Group Modal Button-->
+                
+                <!-- Update/Delete Group Modal Button-->
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#UpdateGroupModal">
                     Update/Delete Group
                 </button>
@@ -74,13 +75,13 @@
                     </table>
                     {% endif %}
                 </div>
-            </div> <!-- End of Dashboard -->
+            </div> <!-- End of Projects -->
+        </div>
 
 
             <div class="main-div">
                 {% include 'calendar.html' %}
                 <!-- Include the JavaScript file for the calendar functionality -->
-            </div>
             </div>
   </body>
 </html>

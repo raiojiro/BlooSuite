@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import authenticate
+from bloosuite import settings
 from .models import *
 from functools import wraps
-from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseNotAllowed, FileResponse
 import google.generativeai as gemini
 from dotenv import load_dotenv
 import os
@@ -191,15 +192,28 @@ def admin(request):
 @custom_login_required
 def projects(request, id=None):
     project = Project.objects.get(id=id, group__users=request.session["user_id"])
-    if request.method == "POST":       
+    if request.method == "POST":
         todoitem = project.list.get(id=request.POST.get("id"))
+        if request.POST.get("download"):
+            file = todoitem.file
+            response = FileResponse(file.open(mode='rb'))
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = f'attachment; filename="{file.name}"'
+            return response
         todoitem.title = request.POST.get("title")
         todoitem.description = request.POST.get("description")
-        file = request.FILES.get("file")
-        if file is not None:
+        if request.FILES.get("file") is not None:
+            file = request.FILES.get("file")
+            if todoitem.file is not None:
+                todoitem.file.delete()
             todoitem.file = file
+            todoitem.save()
         status = request.POST.get("status")
         print(status)
+        if status == "True":
+            todoitem.status = True
+        else:
+            todoitem.status = False
         todoitem.save()
     user = User.objects.get(id=request.session["user_id"])    
     if project is not None:
