@@ -41,10 +41,6 @@
             <div class="modal-body">
                 <form id="projectform" action="" method="post">
                     {% csrf_token %}
-<<<<<<< HEAD
-                    <input type="hidden" name="formtype" value="project">
-=======
->>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
                     <label for="projectname" class="form-label">Project Name:</label>
                     <input type="text" class="form-control" id="projectname" name="projectname" required><br>
                     <label for="projectdescription" class="form-label"">Project Description:</label>
@@ -67,11 +63,7 @@
             </div>
             <div class="modal-footer">
                 <input type="reset" value="Close" class="btn btn-secondary" data-bs-dismiss="modal">
-<<<<<<< HEAD
-                <input type="submit" id="submit" value="Submit" class="btn btn-primary">
-=======
                 <input type="submit" id="submit" name="addproject" value="Submit" class="btn btn-primary">
->>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
             </div>
             </form>
         </div>
@@ -89,10 +81,6 @@
         <div class="modal-body">
             <form id="addgroupform" method="POST">
                 {% csrf_token %}
-<<<<<<< HEAD
-                <input type="hidden" name="formtype" value="group">
-=======
->>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
                 <label for="groupname" class="form-label">Group Name:</label>
                 <input type="text" class="form-control" id="groupname" name="groupname" required>
                 <div id="addgroupuserlist">
@@ -108,11 +96,7 @@
 
                 <span class="modal-footer">
                     <input type="reset" value="Close" class="btn btn-secondary" data-bs-dismiss="modal">
-<<<<<<< HEAD
-                    <input type="submit" id="submit" value="Create" class="btn btn-primary">
-=======
                     <input type="submit" id="submit" name="addgroup" value="Create" class="btn btn-primary">
->>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
                 </span>
             </form>
         </div>
@@ -141,11 +125,7 @@
                     <span class="modal-footer">
                         <input type="reset" value="Close" class="btn btn-secondary" data-bs-dismiss="modal">
                         <input type="submit" id="deletegroup" name="deletegroup" value="Delete Group" class="btn btn-primary">
-<<<<<<< HEAD
-                      <!--  <input type="submit" id="selectgroup" name="selectgroup" value="Select">-->
-=======
                         <input type="submit" id="selectgroup" name="selectgroup" value="Select" class="btn btn-primary">
->>>>>>> c1e2ca526980607ecbc663547c9084e155350b62
                     </span>
                 </form>
             </div>
