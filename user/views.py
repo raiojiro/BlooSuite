@@ -39,27 +39,13 @@ def index(request):
             project.status = True
             project.save()
         
-        if request.POST.get("deletegroup"):
-            group_id = request.POST.get("updategroup")
+        elif request.POST.get("deletegroup"):
+            group_id = request.POST.get("deletegroup")
             group = User_group.objects.get(id=group_id)
             try:
                 group.delete()
             except:
-                pass
-        
-
-        elif request.POST.get("updategroup"):
-            group_id = request.POST.get("group_id")
-            group = User_group.objects.get(id=group_id)
-            group.users.all().delete()
-            users = request.POST.getlist("userlist[]")
-            for user in users:
-                if user is not None:
-                    if User.objects.filter(id=user).exists():
-                        b = User.objects.get(id=user)
-                        group.users.add(b.id)
-            group.save()
-        
+                pass      
         elif request.POST.get("addgroup"):
             name = request.POST.get("groupname")
             users = request.POST.getlist("userlist[]")
@@ -89,15 +75,37 @@ def index(request):
     groups = User_group.objects.filter(users=request.session["user_id"])
     projects = Project.objects.filter(group__users=request.session["user_id"], status=False).order_by('created_at')
     users = User.objects.order_by("name").only("id" , "name")
-    return render(request, "home.html", {'projects':projects, "groups":groups, "users":users})
+    context = {"groups":groups, "projects":projects, "users":users}
+
+    if request.method == "POST":
+        if request.POST.get("updategroup"):
+            group_id = request.POST.get("group_id")
+            group = User_group.objects.get(id=group_id)
+            group_users = group.users.all()
+            if request.POST.getlist("updategroup_userlist[]"):
+                group.name = request.POST.get("group_name")
+                users = request.POST.getlist("updategroup_userlist[]")
+                group.users.clear()
+                group.users.add(request.session["user_id"])
+                for user in users:
+                    if User.objects.filter(id=user).exists():
+                        group.users.add(user)
+                group.save()
+            else:
+                context["group_to_update"] = group
+                context["group_users"] = group_users
+            group.save()
+    return render(request, "home.html", context)
 
 def login(request):
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
-
-        user = User.objects.get(username=username)
-
+        try:
+            user = User.objects.get(username=username)
+        except:
+            return render(request, "login.html", {"error": "Invalid username or password"})
+        
         if check_password(password, user.password):
             request.session["user_id"] = user.id
             match user.role:
@@ -105,8 +113,6 @@ def login(request):
                     return redirect("home")
                 case User.Role.ADMIN:
                     return redirect("admin")
-                case _:
-                    raise ValueError(f"Invalid user role: {user.role}")
         else:
             return render(request, "login.html", {"error": "Invalid username or password"})
 

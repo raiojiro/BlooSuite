@@ -1,34 +1,3 @@
-{% if updategroup %}
-<div class="modal fade" id="UpdateGroupModal2" tabindex="-1" aria-labelledby="UpdateGroupModalLabel2"
-    aria-hidden="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="UpdateGroupModalLabel">UpdateGroup</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="updategroupform" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="group_id" value="{{group.id}}">
-                    {% for user in group.users}
-                    <select id="updategroup" name="updategroup" class="form-select" aria-label="Update Group">
-                        <option id="updategroup" value="0">Select this to remove the user</option>
-                        {% for user in users %}
-                        <option id="updategroup" name="userlist[]" value="{{user.id}}">{{user.name}}</option>
-                        {% endfor %}
-                    </select>
-                    <span class="modal-footer">
-                        <input type="reset" value="Close" class="btn btn-secondary" href="{% url 'home' %}">
-                        <input type="submit" id="updategroup" name="updategroup" value="Update Group" class="btn btn-primary">
-                    </span>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> <!--- Update End of Update Group Modal -->
-{% endif %}
-
 
 <!-- Project Modal -->
 <div class="modal fade" id="ProjectModal" tabindex="-1" aria-labelledby="ProjectModalLabel" aria-hidden="true">
@@ -104,20 +73,19 @@
 </div>
 </div> <!--- End of Add Group Modal -->
 
-<!-- Update Group Modal -->
-<div class="modal fade" id="UpdateGroupModal" tabindex="-1" aria-labelledby="UpdateGroupModalLabel" aria-hidden="true">
+<!-- Delete Group Modal -->
+<div class="modal fade" id="DeleteGroupModal" tabindex="-1" aria-labelledby="DeleteGroupModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="UpdateGroupModalLabel">Select Group to Modify</h1>
+                <h1 class="modal-title fs-5" id="DeleteGroupModalLabel">Select Group to Delete</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="deletegroupform" method="POST">
                     {% csrf_token %}
-                    <input type="hidden" name="formtype" value="group">
                     <label class="form-label" for="updategroup">Group:</label>
-                    <select class="form-select" aria-label="Select Group" name="updategroup" id="updategroup" onchange="updateGroup()" onfocus="this.selectedIndex = -1;">
+                    <select class="form-select" aria-label="Select Group" name="deletegroup" id="deletegroup" onfocus="this.selectedIndex = -1;" required>
                         {% for group in groups %}
                         <option id="group_id" name= "group_id" value="{{group.id}}">{{group.name}}</option>
                         {% endfor %}
@@ -125,8 +93,56 @@
                     <span class="modal-footer">
                         <input type="reset" value="Close" class="btn btn-secondary" data-bs-dismiss="modal">
                         <input type="submit" id="deletegroup" name="deletegroup" value="Delete Group" class="btn btn-primary">
-                        <input type="submit" id="selectgroup" name="selectgroup" value="Select" class="btn btn-primary">
                     </span>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> <!--- Update End of Update Group Modal -->
+
+<!-- Update Group Modal -->
+<div class="modal fade" id="UpdateGroupModal" tabindex="-1" aria-labelledby="UpdateGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="UpdateGroupModalLabel">Update Group</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updategroupform" method="POST">
+                    {% csrf_token %}
+                    <label class="form-label" for="updategroup">Group:</label>
+                    {% if group_users %}
+                    <input type="hidden" id= "group_id" name="group_id" value="{{group_to_update.id}}" readonly>
+                    <input type="text" class="form-control" id="group_name" name="group_name" value="{{group_to_update.name}}" required>
+                    <div id="updategroupuserlist">
+                    <label class="form-label" for="group_users">Users:</label>
+                    {% for group_user in group_users %}
+                    <select class="form-select" id="group_users" name="updategroup_userlist[]">
+                        <option value="-1">Remove User</option>
+                        {% for user in users %}
+                        <option value="{{user.id}}" {% if user.id is group_user.id %} selected {% endif %}>{{user.name}}</option>
+                        {% endfor %}
+                    </select>
+                    {% endfor %}
+                    </div>
+                    <br><button class="btn btn-primary" type="button" onclick="updateGroup()">Add</button>
+                    <span class="modal-footer">
+                        <a class="btn btn-secondary" href="{% url 'home' %}">Close</a>
+                        <input type="submit" id="updategroup" name="updategroup" value="Update" class="btn btn-primary">
+                    </span>
+                    {% else %}
+                    <select class="form-select" aria-label="Select Group" name="group_id" id="group_id"
+                        onfocus="this.selectedIndex = -1;" required>
+                        {% for group in groups %}
+                        <option value="{{group.id}}">{{group.name}}</option>
+                        {% endfor %}  
+                    </select>
+                    <span class="modal-footer">
+                        <input type="reset" value="Close" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <input type="submit" id="updategroup" name="updategroup" value="Select" class="btn btn-primary">
+                    </span>
+                    {% endif %}
                 </form>
             </div>
         </div>

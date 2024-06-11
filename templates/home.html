@@ -20,12 +20,19 @@
                     newspan.innerHTML='<select class="form-select" id="userlist" name="userlist[]" aria-label="Select User"> {% for user in users %} <option value="{{user.id}}">{{ user.name }}</option>{% endfor %}</select>';
                     document.getElementById("addgroupuserlist").appendChild(newspan);
                 }
+                function updateGroup(){
+                    var newspan = document.createElement("span");
+                    newspan.innerHTML = '<select class="form-select" name="updategroup_userlist[]" aria-label="Select User"> {% for user in users %} <option value="{{user.id}}">{{ user.name }}</option>{% endfor %}</select>';
+                    document.getElementById("updategroupuserlist").appendChild(newspan);
+                    
+                }
             </script>
         <link rel="stylesheet" href="{% static 'style.css' %}" />
         
   </head>
   <body>
     {% include "nav.html" %}
+
     <h3 class="text-primary main-title">Dashboard</h2>
     <div class="container-fluid main-body">
             <div class="main-div project-div">
@@ -40,14 +47,24 @@
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddGroupModal">
                     Add Group
                 </button>
+
+                <!-- Update Group Modal Button-->
+                <button type="button" id="updategroupbutton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#UpdateGroupModal">
+                    Update Group
+                </button>
                 
-                <!-- Update/Delete Group Modal Button-->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#UpdateGroupModal">
-                    Update/Delete Group
+                <!-- Delete Group Modal Button-->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DeleteGroupModal">
+                    Delete Group
                 </button>
                 </div>
-
                 {% include 'modal.html' %}
+
+                {% if group_users %}
+                <script>
+                    document.getElementById("updategroupbutton").click();
+                </script>
+                {% endif %}
                 <div class="container-md project-list-div">
                     {% if projects %}
                    <table class="table">
