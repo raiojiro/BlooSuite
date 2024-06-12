@@ -85,7 +85,7 @@
                 <form id="deletegroupform" method="POST">
                     {% csrf_token %}
                     <label class="form-label" for="updategroup">Group:</label>
-                    <select class="form-select" aria-label="Select Group" name="deletegroup" id="deletegroup" onfocus="this.selectedIndex = -1;" required>
+                    <select class="form-select" aria-label="Select Group" name="delete_group_id" id="delete_group_id" onfocus="this.selectedIndex = -1;" required>
                         {% for group in groups %}
                         <option id="group_id" name= "group_id" value="{{group.id}}">{{group.name}}</option>
                         {% endfor %}

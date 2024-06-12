@@ -9,6 +9,7 @@ import google.generativeai as gemini
 from dotenv import load_dotenv
 import os
 import inspect
+import random, string
 
 '''
 load_dotenv()
@@ -40,7 +41,7 @@ def index(request):
             project.save()
         
         elif request.POST.get("deletegroup"):
-            group_id = request.POST.get("deletegroup")
+            group_id = request.POST.get("delete_group_id")
             group = User_group.objects.get(id=group_id)
             try:
                 group.delete()
@@ -120,14 +121,23 @@ def login(request):
 
 def register(request):
     if request.method == "POST":
-        new_user = User()
-        new_user.username = request.POST.get("username")
-        if User.objects.filter(username=new_user.username).exists():
-            return render(request, "register.html", {"error": "Username already exists"})
-        new_user.password = make_password(request.POST.get("password"))
-        new_user.save()
-        return redirect("login")
+        activation_code = request.POST.get("activation_code")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
 
+        try:
+            new_user = User.objects.get(activation_code=activation_code)
+        except:
+            return render(request, {"error" : "Invalid activation code. Please contact the administrator."})
+        else:   
+            if User.objects.filter(username=username).exists():
+                context = {"error" :"Username already exists"}
+                return render(request, "register.html", context)
+            else:
+                new_user.username = username
+                new_user.password = make_password(password)
+                new_user.save()
+                return redirect("login")
     return render(request, "register.html")
 
 @custom_login_required
@@ -185,13 +195,32 @@ def ticket(request):
 
 @custom_login_required
 def admin(request):
+    error, new_activation_code = None, None
     user = User.objects.get(id=request.session["user_id"])
     if user.role != User.Role.ADMIN:
         return redirect("login")
+    if request.method == "POST":
+        if request.POST.get("createuser"):
+            name = request.POST.get("name")
+            email = request.POST.get("email")
+            activation_code = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+            while User.objects.filter(activation_code=activation_code).exists():
+                activation_code = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+            try:
+                new_user = User.objects.create(name=name, email=email, activation_code=activation_code, role=User.Role.USER)
+                new_user.save()
+                new_activation_code = new_user.activation_code
+            except Exception as e:
+                error = e
+    
 
     users = User.objects.all()
 
     context = { "users": users }
+    if error is not None:
+        context["error"] = error
+    elif new_activation_code is not None:
+        context["activation_code"] = new_activation_code
 
     return render(request, "admin.html", context)
 

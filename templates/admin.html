@@ -39,6 +39,39 @@
       </form>
     </div>
   </div>
+
+  <!-- Create User Modal -->
+  <div class="modal fade" id="AddUserModal" tabindex="-1" aria-labelledby="AddUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="AddUserModalLabel">Add Project</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="createuserform" method="POST">
+            {% csrf_token %}
+              <label for="name" class="form-label">Name:</label>
+              <input type="text" name="name" id="name" class="form-control" required>
+              <label for="email" class="form-label">Email:</label>
+              <input type="email" name="email" id="email" class=" form-control" required>
+            <span class="modal-footer">
+              <input type="reset" value="Close" class="btn btn-secondary" data-bs-dismiss="modal">
+              <input type="submit" id="submit" name="createuser" value="Create" class="btn btn-primary">
+            </span>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div> <!--- End of Add User Modal -->
+
+<!-- Success/ Error Message for User Creation -->
+  {% if error %}
+  <span class="alert alert-danger form-control">{{ error }}</span>
+  {% elif activation_code %}
+  <span class="alert alert-success form-control">The account has been activated. The activation code is {{ activation_code }}</span>
+  {% endif %}
+
   <div class="p-4">
     <div class="container-fluid border rounded p-4">
       <button
@@ -48,6 +81,7 @@
       >
         Submit Payroll
       </button>
+      <button class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#AddUserModal">Create User</button>
       <table class="table">
         <caption>
           Users
@@ -65,7 +99,7 @@
             <td>
               <a href="{% url 'payroll' user.id %}"
                 ><i class="bi bi-credit-card text-black"></i
-              ></a>
+              >t</a>
             </td>
           </tr>
           {% endif %} {% endfor %}

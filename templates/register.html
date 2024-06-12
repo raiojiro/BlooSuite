@@ -8,7 +8,7 @@
       {% csrf_token %}
       <div class="mb-3">
         <label class="form-label" for="active_code">Activation Code:</label>
-        <input class="form-control" type="password" id="active_code" />
+        <input class="form-control" type="text" id="active_code" name="activation_code" minlength="16" maxlength="16" required />
       </div>
       <div class="mb-3">
         <label class="form-label" for="username">Username</label>

@@ -8,10 +8,11 @@ class User(models.Model):
         USER = "USER"
         ADMIN = "ADMIN"
     name = models.CharField(max_length=30)
-    username = models.CharField(max_length=30)
-    email = models.EmailField(max_length=50)
-    password = models.CharField(max_length=100)
+    username = models.CharField(max_length=30, unique=True, blank=True, null=True)
+    email = models.EmailField(max_length=50, unique=True, blank=True, null=True)
+    password = models.CharField(max_length=100, blank=True, null=True)
     role = models.CharField(max_length=5, choices=Role.choices, default=Role.USER)
+    activation_code = models.CharField(unique=True, max_length=100, blank=True, null=True)
 
 class Ticket(models.Model):
     title = models.TextField()
