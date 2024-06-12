@@ -111,8 +111,10 @@ def login(request):
             request.session["user_id"] = user.id
             match user.role:
                 case User.Role.USER:
+                    request.session["user_role"] = "user"
                     return redirect("home")
                 case User.Role.ADMIN:
+                    request.session["user_role"] = "admin"
                     return redirect("admin")
         else:
             return render(request, "login.html", {"error": "Invalid username or password"})

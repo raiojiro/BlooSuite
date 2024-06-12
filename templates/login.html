@@ -1,7 +1,8 @@
 {% extends "base.html" %} {% block content %}
+{% load static %}
 <body class="auth-body">
-  <div class="container-fluid logo-center logo-auth">
-    <a class="navbar-brand text-center">BlooSuite</a>
+  <div id="logo-auth" class="container-fluid text-center mt-5">
+    <img class="logo-auth navbar-brand" src="{% static 'logo-dark.png' %}">
   </div>
   <div class="auth-form">
     <form method="POST">

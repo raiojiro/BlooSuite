@@ -2,6 +2,7 @@
 <body>
   {% include "nav.html" %}
 
+  <h2 class="text-primary main-title">Payroll</h2>
   <div class="p-4">
     <div class="container-fluid border rounded">
       <table class="table">
@@ -11,36 +12,18 @@
         <thead>
           <tr>
             <th>Date</th>
-            <th>Gross income</th>
-            <th>Net income</th>
+            <th>Amount</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
+          {% for payroll in payrolls %}
           <tr>
-            <td>02/01/2024</td>
-            <td>1500</td>
-            <td>1200</td>
-            <td><i class="bi-download"></i></td>
-          </tr>
-          <tr>
-            <td>02/02/2024</td>
-            <td>1500</td>
-            <td>1200</td>
-            <td><i class="bi-download"></i></td>
-          </tr>
-          <tr>
-            <td>02/03/2024</td>
-            <td>1500</td>
-            <td>1200</td>
-            <td><i class="bi-download"></i></td>
-          </tr>
-          <tr>
-            <td>02/04/2024</td>
-            <td>1500</td>
-            <td>1200</td>
-            <td><i class="bi-download"></i></td>
-          </tr>
+            <td>{{ payroll.created_at }}</td>
+            <td>{{ payroll.amount }}</td>
+            <td></td>
+            </tr>
+            {% endfor %}
         </tbody>
       </table>
     </div>
