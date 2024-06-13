@@ -46,3 +46,10 @@ class Payroll(models.Model):
     payslip = models.FileField(upload_to='', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Event(models.Model):
+    name = models.TextField()
+    description = models.TextField()
+    organizer = models.ForeignKey(User, on_delete=models.CASCADE)
+    participants = models.ManyToManyField(User, related_name="users")
+    datetime = models.DateTimeField()
