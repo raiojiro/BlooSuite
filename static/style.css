@@ -97,7 +97,11 @@ body {
 
 .project-list-div {
   margin: 1rem 0.2rem;
-  width: 80%;
+  width: 98%;
+}
+
+.table {
+  border-radius: 100px;
 }
 
 .wrapper {

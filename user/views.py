@@ -99,6 +99,8 @@ def index(request):
     return render(request, "home.html", context)
 
 def login(request):
+    if request.session.__contains__("user_id"):
+        return redirect("home")
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
@@ -122,6 +124,8 @@ def login(request):
     return render(request, "login.html")
 
 def register(request):
+    if request.session.__contains__("user_id"):
+        return redirect("home")
     if request.method == "POST":
         activation_code = request.POST.get("activation_code")
         username = request.POST.get("username")
@@ -155,14 +159,14 @@ def logout(request):
 def payroll(request, user, id=None, file=None):
 
     if request.method == "POST":
-        if user.role != User.Role.ADMIN:
-            return redirect("login")
         if request.POST.get("download"):
             file = Payroll.objects.get(id=request.POST.get("download")).payslip
             response = FileResponse(file.open(mode='rb'))
             response['Content-Type'] = 'application/octet-stream'
             response['Content-Disposition'] = f'attachment; filename="{file.name}"'
             return response
+        if user.role != User.Role.ADMIN:
+            return redirect("login")
         payroll_user = User.objects.get(id=request.POST.get("user_id"))
         amount = request.POST.get("amount")
         payroll = Payroll.objects.create(amount=amount, user=payroll_user)
