@@ -19,6 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const allEvents = Array.from(document.querySelectorAll("[data-datetime]"));
 
+  const calendarDatePicker = document.getElementById("calendar-date-picker");
+  calendarDatePicker.onchange = (ev) => {
+    const date = new Date(ev.target.value);
+    renderCalendar(luxon.DateTime.fromJSDate(date));
+  };
+
   function selectDate(datetime) {
     selectedDateModalTitle.textContent = `Events for ${datetime.toLocaleString()}`;
 
@@ -46,13 +52,14 @@ document.addEventListener("DOMContentLoaded", () => {
   addEventModalButton.onclick = addEvent;
 
   function renderCalendar(datetime) {
+    calendarContainer.innerHTML = "";
     for (let i = 0; i < datetime.daysInMonth; i++) {
       const div = document.createElement("div");
 
       const label = document.createElement("span");
       label.innerText = i + 1;
 
-      const selectedDatetime = luxon.DateTime.fromObject({ day: i + 1 });
+      const selectedDatetime = datetime.set({ day: i + 1 });
 
       div.onclick = () => {
         selectDate(selectedDatetime);
