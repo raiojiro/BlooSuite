@@ -75,7 +75,7 @@ def index(request):
             new_project.save()
     groups = User_group.objects.filter(users=request.session["user_id"])
     projects = Project.objects.filter(group__users=request.session["user_id"], status=False).order_by('created_at')
-    users = User.objects.order_by("name").only("id" , "name")
+    users = User.objects.only("id" , "name").order_by("name")
     context = {"groups":groups, "projects":projects, "users":users}
 
     if request.method == "POST":
@@ -152,45 +152,62 @@ def logout(request):
     return redirect(login)
 
 @custom_login_required
-def payroll(request, user, id=None):
+def payroll(request, user, id=None, file=None):
+
     if request.method == "POST":
         if user.role != User.Role.ADMIN:
             return redirect("login")
-
-        payroll = Payroll()
+        if request.POST.get("download"):
+            file = Payroll.objects.get(id=request.POST.get("download")).payslip
+            response = FileResponse(file.open(mode='rb'))
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = f'attachment; filename="{file.name}"'
+            return response
         payroll_user = User.objects.get(id=request.POST.get("user_id"))
-        payroll.amount = request.POST.get("amount")
-        payroll.user = payroll_user
+        amount = request.POST.get("amount")
+        payroll = Payroll.objects.create(amount=amount, user=payroll_user)
+        print(request.FILES.get("payslip"))
+        if request.FILES.get("payslip") is not None:
+            payroll.payslip = request.FILES.get("payslip")
         payroll.save()
 
-        return redirect("admin")
-
     payrolls = []
-
     if id is not None:
-        payrolls = Payroll.objects.filter(user__id=id)
+        payrolls = Payroll.objects.filter(user__id=id).order_by("-created_at")
     else:
-        payrolls = Payroll.objects.filter(user__id=request.session["user_id"])
+        payrolls = Payroll.objects.filter(user__id=request.session["user_id"]).order_by("-created_at")
 
     context = { "payrolls": payrolls }
+    if user.role == User.Role.ADMIN:
+        context["users"] = User.objects.only("id", "name")
 
     return render(request, "payroll.html", context=context)
 
+
 @custom_login_required
 def tickets(request):
-    tickets = Ticket.objects.all()
+    if request.method == "POST":
+        if request.POST.get("solved"):
+            ticket = Ticket.objects.get(id=request.POST.get("solved"))
+            ticket.delete()
+
+    if request.session["user_role"] == "admin":
+        tickets = Ticket.objects.all().order_by("-created_at")
+    else:
+        tickets = Ticket.objects.filter(user=request.session["user_id"]).order_by("-created_at")
+
     context = { "tickets": tickets }
     return render(request, "tickets.html", context=context)
 
 @custom_login_required
 def ticket(request):
     if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
+        return redirect(tickets)
 
     title = request.POST.get("title")
     content = request.POST.get("content")
-
-    new_ticket = Ticket(title=title, content=content)
+    user = User.objects.get(id=request.session["user_id"])
+    new_ticket = Ticket(title=title, content=content, user=user)
     new_ticket.save()
 
     return redirect("tickets")
@@ -214,7 +231,10 @@ def admin(request):
                 new_activation_code = new_user.activation_code
             except Exception as e:
                 error = e
-    
+        if request.POST.get("deleteuser"):
+            if User.objects.filter(id=request.POST.get("id")).exists():
+                user = User.objects.get(id=request.POST.get("id"))
+                user.delete()
 
     users = User.objects.all()
 
@@ -258,3 +278,29 @@ def projects(request, id=None):
         return render(request, "projects.html", context)
     else:
         return redirect("home")
+    
+@custom_login_required
+def account(request):
+    user = User.objects.get(id=request.session["user_id"])
+    context = {"user": user}
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user.name = name
+        if User.objects.filter(email=email).exclude(id=user.id).exists():
+            context["email_error"] = "Email already exists"
+        else:
+            user.email = email
+        if User.objects.filter(username=username).exclude(id=user.id).exists():
+            context["username_error"] = "Username already exists"
+        else:
+            user.username = username
+        if password is not None:
+            user.password = make_password(password)
+        user.save()
+    return render(request, "account.html", context)
+
+
+        

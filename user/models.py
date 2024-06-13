@@ -17,6 +17,7 @@ class User(models.Model):
 class Ticket(models.Model):
     title = models.TextField()
     content = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class ToDoItem(models.Model):
@@ -42,5 +43,6 @@ class User_group(models.Model):
 
 class Payroll(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payslip = models.FileField(upload_to='', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

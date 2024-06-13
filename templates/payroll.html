@@ -2,10 +2,53 @@
 <body>
   {% include "nav.html" %}
 
+  {% if request.session.user_role == "admin" %}
+  <div class="modal fade" id="submitPayrollModal" tabindex="-1" aria-labelledby="submitPayrollModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="submitPayrollModal">Submit Payroll</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+        <div class="modal-body">
+          <div class="d-flex flex-column gap-2"> 
+            <label class= "form-label" for="user_id">User</label>
+            <select class= "form-select" name="user_id" id="user_id">
+              {% for user in users %}
+              <option value="{{ user.id }}" {% if user.id in request.path %} selected {% endif %}>{{user.username}}</option>
+              {% endfor %}
+            </select>
+            <label class="form-label" for="amount">Amount</label>
+            <input  class="form-control"type="number" min="0" step="0.01" name="amount" id="amount"  required>
+            <label class= "form-label" for="payslip">Payslip</label>
+            <input type="file" class="form-control" name="payslip" id="payslip">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary" name="submit">Submit</button>
+        </div>
+        </form>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
   <h2 class="text-primary main-title">Payroll</h2>
   <div class="p-4">
     <div class="container-fluid border rounded">
-      <table class="table">
+      {% if request.session.user_role == "admin" %}
+      <div class="mb-2 mt-3">
+      <button class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#submitPayrollModal">
+        Submit Payroll
+      </button>
+      </div>
+      {% endif %}
+      <table class="table table-primary table-bordered table-striped">
         <caption>
           Payroll
         </caption>
@@ -21,7 +64,7 @@
           <tr>
             <td>{{ payroll.created_at }}</td>
             <td>{{ payroll.amount }}</td>
-            <td></td>
+            <td>{% if payroll.payslip %}<form method="POST">{% csrf_token %}<button class="btn btn-primary" type="submit" name="download" value="{{ payroll.id }}">Download</button></form>{% endif %}</td>
             </tr>
             {% endfor %}
         </tbody>
