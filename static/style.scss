@@ -1,9 +1,9 @@
 $main-background: url("./background.jpg");
 $primary-colour: azure;
-$secondary-colour: rgb(2,0,36);
+$secondary-colour: rgb(2, 0, 36);
 
-*{
-    font-size:1rem;
+* {
+    font-size: 1rem;
 }
 
 @import "sass/auth";

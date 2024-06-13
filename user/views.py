@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import authenticate
+from django.db.models import Q
 from bloosuite import settings
 from .models import *
 from functools import wraps
@@ -76,7 +77,8 @@ def index(request):
     groups = User_group.objects.filter(users=request.session["user_id"])
     projects = Project.objects.filter(group__users=request.session["user_id"], status=False).order_by('created_at')
     users = User.objects.order_by("name").only("id" , "name")
-    context = {"groups":groups, "projects":projects, "users":users}
+    events = Event.objects.filter(Q(organizer_id=request.session["user_id"]) | Q(participants__id=request.session["user_id"]))
+    context = {"groups":groups, "projects":projects, "users":users, "events": events, "currentUserId": request.session["user_id"]}
 
     if request.method == "POST":
         if request.POST.get("updategroup"):
@@ -258,3 +260,25 @@ def projects(request, id=None):
         return render(request, "projects.html", context)
     else:
         return redirect("home")
+
+@custom_login_required
+def event(request):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    name = request.POST.get("name")
+    description = request.POST.get("description")
+
+    organizer_id = request.POST.get("organizer")
+    organizer = User.objects.get(id=organizer_id)
+
+    participants_ids = request.POST.getlist("participants")
+    participants = User.objects.filter(id__in=participants_ids)
+
+    eventDateTime = request.POST.get("datetime")
+
+    event = Event.objects.create(name=name, description=description, organizer=organizer, datetime=eventDateTime)
+    event.participants.set(participants)
+    event.save()
+
+    return redirect("home")

@@ -44,3 +44,10 @@ class Payroll(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Event(models.Model):
+    name = models.TextField()
+    description = models.TextField()
+    organizer = models.ForeignKey(User, on_delete=models.CASCADE)
+    participants = models.ManyToManyField(User, related_name="users")
+    datetime = models.DateTimeField()
