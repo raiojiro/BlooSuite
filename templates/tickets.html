@@ -59,6 +59,7 @@
             <th>Date</th>
             <th>Title</th>
             <th>Content</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -67,6 +68,7 @@
             <td>{{ ticket.created_at }}</td>
             <td>{{ ticket.title }}</td>
             <td>{{ ticket.content }}</td>
+            <td><form method="POST">{% csrf_token %}<button type="submit" name= "solved" value="{{ ticket.id }}" class="btn btn-success">Mark as Solved</button></form></td>
           </tr>
           {% endfor %}
         </tbody>

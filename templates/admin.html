@@ -1,53 +1,13 @@
 {% extends "base.html" %} {% block content %}
 <body>
   {% include "nav.html" %}
-
-    <h3 class="text-primary main-title">Admin</h3>
-  <div id="submit-modal" class="modal fade modal-xl" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <form class="modal-content" action="/payroll/" method="POST">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title">Submit Payroll</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <div class="d-flex flex-column gap-2">
-            <label for="user_id">User</label>
-            <select name="user_id" id="user_id">
-              {% for user in users %}
-              <option value="{{ user.id }}">{{user.username}}</option>
-              {% endfor %}
-            </select>
-            <label for="amount">Amount</label>
-            <input type="text" name="amount" id="amount" />
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Close
-          </button>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
+  <h3 class="text-primary main-title">Admin</h3>
   <!-- Create User Modal -->
   <div class="modal fade" id="AddUserModal" tabindex="-1" aria-labelledby="AddUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="AddUserModalLabel">Add Project</h1>
+          <h1 class="modal-title fs-5" id="AddUserModalLabel">Add User</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -69,39 +29,44 @@
 
 <!-- Success/ Error Message for User Creation -->
   {% if error %}
-  <span class="alert alert-danger form-control">{{ error }}</span>
+  <span class="alert alert-danger form-control" width: 80%;>{{ error }}</span>
   {% elif activation_code %}
-  <span class="alert alert-success form-control">The account has been activated. The activation code is {{ activation_code }}</span>
+  <span class="alert alert-success form-control"  width: 80%;>The account has been activated. The activation code is {{ activation_code }}</span>
   {% endif %}
 
   <div class="p-4">
     <div class="container-fluid border rounded p-4">
-      <button
-        class="btn btn-primary mb-4"
-        data-bs-toggle="modal"
-        data-bs-target="#submit-modal"
-      >
-        Submit Payroll
+      <div class="pb-2">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddUserModal">
+        Add User
       </button>
-      <button class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#AddUserModal">Create User</button>
-      <table class="table">
+    </div>
+      <table class="table table-primary table-bordered table-striped">
         <caption>
           Users
         </caption>
         <thead>
           <tr>
             <th>Username</th>
-            <th>Action</th>
+            <th colspan="2" class="text-center">Action</th>
           </tr>
         </thead>
         <tbody>
           {% for user in users %} {% if user.role != "ADMIN" %}
-          <tr>
+          <tr width="60%">
             <td>{{ user.username }}</td>
-            <td>
-              <a href="{% url 'payroll' user.id %}"
-                ><i class="bi bi-credit-card text-black"></i
-              >t</a>
+            <td width="10%">
+              <div class="container-fluid">
+              <a class="btn btn-primary" href="{% url 'payroll' user.id %}">View Payroll</a>
+              
+              </div>
+            </td>
+            <td width="10%">
+              <form method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ user.id }}" />
+                <input type="submit" name="deleteuser" value="Delete User" class="btn btn-danger">
+              </form>
             </td>
           </tr>
           {% endif %} {% endfor %}

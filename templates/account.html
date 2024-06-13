@@ -1,0 +1,31 @@
+{% extends 'base.html' %}{% block content %}
+{% include 'nav.html' %}
+<h3 class="text-primary main-title text-center">Account Details</h3>
+<div class="container-fluid position-absolute top-50 start-50 translate-middle border border-info rounded mt-5" style="width: 50vw; height: 50vh;">
+<form method="POST">
+    {% csrf_token %}
+    <label class="form-label" for="name">
+        Name:
+    </label>
+    <input class="form-control" type="text" name="name" id="name" value="{{user.name}}" required>
+    <label class="form-label" for="email">
+        Email:
+    </label>
+    <input class="form-control" type="email" name="email" id="email" value= "{{user.email}}" required>
+    <label class="form-label" for="username">
+        Username:
+    </label>
+    <input class="form-control" type="text" name="username" id="username" value="{{user.username}}" minlength="3" maxlength="20" required>
+    <label class="form-label" for="password">
+        Password:
+    </label>
+    <input class="form-control" type="password" name="password" id="password" minlength ="8" maxlength="20">
+    <input class="btn btn-primary mt-2" type="submit" value="Submit">
+</form>
+    {% if email_error %}
+    <span class="alert alert-danger form-control">{{ email_error }}</span>
+    {% elif username_error %}
+    <span class="alert alert-danger form-control">{{ username_error }}</span>
+    {% endif %}
+</div>
+{% endblock %}
